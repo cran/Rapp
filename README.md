@@ -1,9 +1,9 @@
 
-# Rapp
+# Rapp <img src="man/figures/logo.png" align="right" height="138" alt="" />
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/t-kalinowski/Rapp/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/t-kalinowski/Rapp/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/r-lib/Rapp/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/Rapp/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 Rapp (short for "R application") makes it fun to write and share command
@@ -26,7 +26,7 @@ Here is a simple example Rapp:
 #| description: Flip a coin.
 
 #| description: Number of coin flips
-n <- 1
+n <- 1L
 
 cat(sample(c("heads", "tails"), n, TRUE), fill = TRUE)
 ```
@@ -40,13 +40,22 @@ tails
 $ flip-coin --n=3
 tails heads tails
 
+$ flip-coin --help
+Flip a coin.
+
+Usage: flip-coin [options]
+
+Options:
+  --n <value>  (Default: 1, Type: integer)
+      Number of coin flips
+
 $ flip-coin --help --yaml
 name: flip-coin
 description: Flip a coin.
 options:
   'n':
-    default: 1.0
-    val_type: float
+    default: 1
+    val_type: integer
     arg_type: option
     description: Number of coin flips
 arguments: {}
@@ -131,13 +140,19 @@ package.
 -   Place your app in the `exec` folder in your package, e.g:
     `exec/myapp`. Apps are automatically installed as executable.
 -   Instruct your users to add executables from Rapp and your package to
-    their PATH. On Linux and macOS, add the following to .bashrc or
+    their `PATH`. On Linux and macOS, add the following to .bashrc or
     .zshrc (or equivalent)
 
-``` bash
-export PATH=$(Rscript -e 'cat(system.file("exec", package = "Rapp"))'):$PATH
-export PATH=$(Rscript -e 'cat(system.file("exec", package = "my.package.name"))'):$PATH
-```
+    ``` bash
+    export PATH=$(Rscript -e 'cat(system.file("exec", package = "Rapp"))'):$PATH
+    export PATH=$(Rscript -e 'cat(system.file("exec", package = "my.package.name"))'):$PATH
+    ```
+-   If [`rig`](https://github.com/r-lib/rig) is already on the `PATH`,
+    you can also use `rig` to run a script in a packages `exec` directory:
+
+    ``` bash
+    rig run <pkg>::<script>
+    ```
 
 # Windows
 
@@ -162,9 +177,9 @@ Some other packages in this space:
 - [docopt](https://github.com/docopt/docopt.R)
 - [optparse](https://github.com/trevorld/r-optparse)
 - [argparse](https://github.com/trevorld/r-argparse)
-- [argparser](https://CRAN.R-project.org/package=argparser) 
+- [argparser](https://CRAN.R-project.org/package=argparser)
 
 Also, some interesting examples of other approaches to exporting cli interfaces from R packages:
 
 - [renv](https://github.com/rstudio/renv/blob/main/inst/bin/renv)
-- [bspm](https://github.com/Enchufa2/bspm/blob/master/R/scripts.R)
+- [bspm](https://github.com/cran4linux/bspm/blob/master/R/scripts.R)

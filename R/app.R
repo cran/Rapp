@@ -86,7 +86,6 @@ get_app_inputs <- function(app) {
     default <- e[[3L]]
     if (is.call(default)) {
 
-
       if(!is.symbol(call_sym <- default[[1]]))
         next
 
@@ -123,14 +122,14 @@ get_app_inputs <- function(app) {
         "character" = "string",
         "logical" = "bool",
         "double" = "float",
-        "integer" = "int",
+        "integer" = "integer",
         "NULL" = "string"
       ),
       arg_type =
         if (isTRUE(default) || isFALSE(default)) "switch"
       else if (length(default)) "option"
       else "positional",
-      .val_pos_in_exprs = c(i, 3L)
+      .val_pos_in_exprs = c(i, 3L) # pos 3 in call expr: `<-`(name, 'val')
     )
 
     lineno <- utils::getSrcLocation(exprs[i], "line")
@@ -167,7 +166,7 @@ get_app_inputs <- function(app) {
 #'
 #' @details
 #' See the package README for full details.
-#' https://github.com/t-kalinowski/Rapp
+#' https://github.com/r-lib/Rapp
 #'
 #' @export
 #' @examples
@@ -206,5 +205,6 @@ run <- function(app, args = commandArgs(TRUE)) {
 
   if (process_args(args, app))
     eval(app$exprs, new.env(parent = globalenv()))
+
   invisible()
 }
