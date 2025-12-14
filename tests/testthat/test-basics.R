@@ -1,16 +1,20 @@
 test_that("examples work", {
   old_path <- Sys.getenv("PATH")
-  Sys.setenv(PATH = paste(system.file("examples", package = "Rapp"),
-                          system.file("exec", package = "Rapp"),
-                          R.home("bin"),
-                          old_path,
-                          sep = .Platform$path.sep))
+  Sys.setenv(
+    PATH = paste(
+      system.file("examples", package = "Rapp"),
+      system.file("exec", package = "Rapp"),
+      R.home("bin"),
+      old_path,
+      sep = .Platform$path.sep
+    )
+  )
   on.exit(Sys.setenv(PATH = old_path), add = TRUE)
 
   run_app <- function(name, ..., input = NULL) {
-
-    if(is_windows())
+    if (is_windows()) {
       name <- paste("Rapp", name)
+    }
 
     cmd <- paste0(c(name, ...), collapse = " ")
     # message(cmd)
@@ -27,9 +31,7 @@ test_that("examples work", {
     c("c", "b", "a")
   )
 
-
-  writeLines(c("a", "b", "c", "c", "b", "a"),
-             fi <- tempfile())
+  writeLines(c("a", "b", "c", "c", "b", "a"), fi <- tempfile())
   on.exit(unlink(fi), add = TRUE)
 
   expect_equal(
@@ -42,4 +44,24 @@ test_that("examples work", {
     c("c", "b", "a")
   )
 
+  expect_all_equal <- function(...) {
+    if (...length() < 2) {
+      stop("not enough args")
+    }
+    for (i in 2:...length()) {
+      expect_equal(..1, ...elt(i))
+    }
+  }
+
+  expect_all_equal(
+    "tails tails tails",
+    run_app("flip-coin.R --flips 3 --seed 1234"),
+    run_app("flip-coin.R --flips=3 --seed 1234"),
+    run_app("flip-coin.R -n 3 --seed 1234"),
+    run_app("flip-coin.R -n 3 --seed=1234")
+  )
+
+  expect_snapshot(
+    writeLines(run_app("flip-coin.R --help"))
+  )
 })
